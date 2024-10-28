@@ -1,4 +1,5 @@
 from pico2d import load_image
+import state_machine
 
 class Boy:
     def __init__(self):
@@ -7,6 +8,7 @@ class Boy:
         self.dir = 0
         self.action = 3
         self.image = load_image('animation_sheet.png')
+        self.state_machine = StateMachine()
 
     def update(self):
         self.frame = (self.frame + 1) % 8
