@@ -1,9 +1,7 @@
 from pico2d import *
 import random
-import grass
-import boy
-
-# Game object class here
+from grass import *
+from boy import *
 
 def handle_events():
     global running
@@ -15,7 +13,8 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
         else:
-            boy.handle_event(event)
+            if event.type == SDL_KEYDOWN or SDL_KEYUP:
+                boy.add_event(event) # input 이벤트를 boy 에게 전달하고 있다.
 
 def reset_world():
     global running
@@ -36,8 +35,6 @@ def reset_world():
 def update_world():
     for o in world:
         o.update()
-    pass
-
 
 def render_world():
     clear_canvas()
@@ -47,11 +44,12 @@ def render_world():
 
 open_canvas()
 reset_world()
-# game loop
+
 while running:
     handle_events()
     update_world()
     render_world()
     delay(0.01)
+
 # finalization code
 close_canvas()
