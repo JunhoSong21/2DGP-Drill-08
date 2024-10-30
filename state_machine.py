@@ -21,9 +21,14 @@ def left_up(e):
 def space_down(e): # e 가 space_down 인지 판단 > 0 or 1
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SPACE
 
+def a_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
+
 def time_out(e): # e 가 time_out 인지 판단
     return e[0] == 'TIME_OUT'
 
+def AutoRun_time_out(e): # e 가 AutoRun_time_out 인지 판단
+    return e[0] == 'AUTORUN_TIME_OUT'
 
 class StateMachine:
     def __init__(self, obj):
@@ -51,8 +56,6 @@ class StateMachine:
                     return # event에 따른 상태 변환 완료
                 
             # 이 시점에 왔다는 것은, event에 따른 전환에 실패.
-            print(f'    WARNING: {e} not handled at state {self.cur_state}')
-
 
     def draw(self):
         self.cur_state.draw(self.obj)

@@ -19,7 +19,6 @@ def handle_events():
 def reset_world():
     global running
     global grass
-    global team
     global world
     global boy
 

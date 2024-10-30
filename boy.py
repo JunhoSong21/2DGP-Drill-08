@@ -10,6 +10,13 @@ class Idle:
         elif right_up(e) or left_down(e) or start_event(e):
             boy.action = 3
             boy.face_dir = 1
+        elif AutoRun_time_out(e):
+            if boy.dir == 1:
+                boy.face_dir = 1
+                boy.action = 3
+            elif boy.dir == -1:
+                boy.dir = -1
+                boy.action = 2
 
         boy.dir = 0
         boy.frame = 0
@@ -34,7 +41,10 @@ class Idle:
 class Sleep:
     @staticmethod
     def enter(boy, e):
-        pass
+        if boy.face_dir == 1:
+            boy.dir = 1
+        elif boy.face_dir == -1:
+            boy.dir = -1
 
     @staticmethod
     def exit(boy):
@@ -78,6 +88,10 @@ class Run:
     @staticmethod
     def do(boy):
         boy.x += boy.dir * 5
+        if boy.x >= 780:
+            boy.x = 780
+        elif boy.x <= 20:
+            boy.x = 20
         boy.frame = (boy.frame + 1) % 8
 
     @staticmethod
@@ -85,6 +99,45 @@ class Run:
         boy.image.clip_draw(
             boy.frame * 100, boy.action * 100, 100, 100,
             boy.x, boy.y)
+
+class AutoRun:
+    @staticmethod
+    def enter(boy, e):
+        if boy.face_dir == 1:
+            boy.dir = 1
+            boy.action = 1
+        elif boy.face_dir == -1:
+            boy.dir = -1
+            boy.action = 0
+
+        boy.wait_time = get_time()
+        boy.frame = 0
+
+    @staticmethod
+    def exit(boy):
+        pass
+
+    @staticmethod
+    def do(boy):
+        boy.x += boy.dir * 10
+        if boy.x >= 780:
+            boy.dir = -1
+            boy.action = 0
+            boy.x = 780
+        elif boy.x <= 20:
+            boy.dir = 1
+            boy.action = 1
+            boy.x = 20
+        boy.frame = (boy.frame + 1) % 8
+
+        if get_time() - boy.wait_time > 5:
+            boy.state_machine.add_event(('AUTORUN_TIME_OUT', 0))
+
+    @staticmethod
+    def draw(boy):
+        boy.image.clip_draw(
+            boy.frame * 100, boy.action * 100, 100, 100,
+            boy.x, boy.y + 10, 150, 150)
 
 class Boy:
     def __init__(self):
@@ -97,9 +150,10 @@ class Boy:
         self.state_machine.start(Idle) # 초기 상태 Sleep 으로 설정
         self.state_machine.set_transitions(
             {
-                Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, time_out: Sleep},
-                Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle},
-                Sleep: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, space_down: Idle}
+                Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, time_out: Sleep, a_down: AutoRun},
+                Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, a_down: AutoRun},
+                AutoRun: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, AutoRun_time_out: Idle},
+                Sleep: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, space_down: Idle, a_down: AutoRun}
             }
         )
 
