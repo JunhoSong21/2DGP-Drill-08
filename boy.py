@@ -34,8 +34,6 @@ class Idle:
 class Sleep:
     @staticmethod
     def enter(boy, e):
-        if boy.dir
-        boy.face_dir
         pass
 
     @staticmethod

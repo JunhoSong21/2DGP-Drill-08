@@ -3,6 +3,9 @@ from sdl2 import *
 # 이벤트 체크 함수를 정의
 # 상태 이벤트 e = (종류, 실제값)
 
+def start_event(e):
+    return e[0] == 'START'
+
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
 
